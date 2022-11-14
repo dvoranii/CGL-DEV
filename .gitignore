@@ -65,6 +65,8 @@ node_modules/
 # dotenv environment variables file
 .env
 
-#api key
+
+#json files
 .json
+#api key
 test.js
