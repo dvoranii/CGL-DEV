@@ -1,30 +1,34 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
 import {
   getFirestore,
-  doc,
-  getDoc,
-  setDoc,
   collection,
   addDoc,
-  updateDoc,
-  deleteDoc,
-  deleteField,
 } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js";
 
+// import * as functions from "https://www.gstatic.com/firebasejs/9.4.0/firebase-functions";
+// const stripe = require("stripe")(functions.config().stripe.secret);
+
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  DB_URL,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MSG_SENDER_ID,
+  APP_ID,
+} from "./test.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC97FIfRYf_6zUgWXRaooi5NZHZnEi3VLA",
-  authDomain: "cgl-forms.firebaseapp.com",
-  databaseURL: "https://cgl-forms-default-rtdb.firebaseio.com",
-  projectId: "cgl-forms",
-  storageBucket: "cgl-forms.appspot.com",
-  messagingSenderId: "1008506608692",
-  appId: "1:1008506608692:web:47818afefcc2935608be61",
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  databaseURL: DB_URL,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MSG_SENDER_ID,
+  appId: APP_ID,
 };
 
-// Initialize Firebase
-
 const app = initializeApp(firebaseConfig);
-
 let db = getFirestore(app);
 
 const fullName = document.getElementById("fullName");
@@ -62,10 +66,6 @@ window.addEventListener("DOMContentLoaded", () => {
   skidTypeWrapper.insertAdjacentHTML("afterbegin", templateSkidTypes);
   skidDimensions.insertAdjacentHTML("afterbegin", templateSkidDimensions);
 
-  let inputs = document.querySelectorAll(".dimensions-input");
-  let skidTypes = document.querySelectorAll(".skid-type");
-
-  saveInputs(inputs, skidTypes);
   displaySkidInputs();
 });
 
@@ -83,35 +83,6 @@ function displaySkidInputs() {
       skidTypeWrapper.insertAdjacentHTML("beforeend", templateSkidTypes);
       skidDimensions.insertAdjacentHTML("beforeend", templateSkidDimensions);
     }
-
-    let inputs = document.querySelectorAll(".dimensions-input");
-    let skidTypes = document.querySelectorAll(".skid-type");
-    saveInputs(inputs, skidTypes);
-  });
-}
-
-// need to find a way to run this function right before user hits submit
-// update model dynamically?
-function saveInputs(inputs, skidTypes) {
-  let skidTypeArr = [];
-  let inputArr = [];
-  skidTypes.forEach((type) => {
-    skidTypeArr.push(type);
-
-    inputs.forEach((input) => {
-      if (input.dataset.count === type.dataset.count) {
-        input.addEventListener("change", () => {
-          inputArr.push({
-            inputDimension: input.placeholder,
-            value: input.value,
-            index: input.dataset.count,
-          });
-          // if ((input.dataset.count + 1) % 3 === 0) {
-          //   console.log(input);
-          // }
-        });
-      }
-    });
   });
 }
 
@@ -124,7 +95,7 @@ const hazardous = document.querySelector(".hazardous");
 const checkbox = document.querySelector(".checkbox");
 
 // where the submission actually gets saved to firestore
-async function addDocument_AutoID(inputValue, skidType) {
+async function addDocument_AutoID(inputs) {
   var ref = collection(db, "quotes");
 
   const docRef = await addDoc(ref, {
@@ -132,7 +103,7 @@ async function addDocument_AutoID(inputValue, skidType) {
     details: "Some details about the new doc",
     anotherField: "another field",
     // needs to be structured something like this
-    skidType: { skidType: { skidType, inputValue } },
+    skid: inputs,
   })
     // will need to display message in the DOM
     .then(() => {
@@ -151,17 +122,17 @@ submitBtn.addEventListener("click", (e) => {
   let skidTypes = document.querySelectorAll(".skid-type");
 
   let arrInput = [];
-  let arrSkidType = { type: [], inputs: [] };
   inputs.forEach((input) => {
-    skidTypes.forEach((type) => {
+    skidTypes.forEach((type, i) => {
       if (input.dataset.count === type.dataset.count) {
-        arrSkidType.type.push(type.value);
-        arrSkidType.inputs.push(input.value);
+        arrInput.push(
+          `${type.value} ${i} - ${input.placeholder}: ${input.value}`
+        );
       }
     });
   });
 
-  addDocument_AutoID(arrInput, arrSkidType);
+  addDocument_AutoID(arrInput);
 });
 
 // const navSlide = () => {
@@ -183,6 +154,3 @@ burger.addEventListener("click", () => {
   // Burger animation
   burger.classList.toggle("toggle");
 });
-// };
-
-// navSlide();
