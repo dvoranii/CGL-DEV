@@ -5,9 +5,6 @@ import {
   addDoc,
 } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js";
 
-// import * as functions from "https://www.gstatic.com/firebasejs/9.4.0/firebase-functions";
-// const stripe = require("stripe")(functions.config().stripe.secret);
-
 import {
   API_KEY,
   AUTH_DOMAIN,
