@@ -13,16 +13,16 @@ import {
   STORAGE_BUCKET,
   MSG_SENDER_ID,
   APP_ID,
-} from "./test.js";
+} from "./apikey.js";
 
 const firebaseConfig = {
   apiKey: API_KEY,
-  authDomain: AUTH_DOMAIN,
-  databaseURL: DB_URL,
-  projectId: PROJECT_ID,
-  storageBucket: STORAGE_BUCKET,
-  messagingSenderId: MSG_SENDER_ID,
-  appId: APP_ID,
+  authDomain: "cgl-forms.firebaseapp.com",
+  databaseURL: "https://cgl-forms-default-rtdb.firebaseio.com",
+  projectId: "cgl-forms",
+  storageBucket: "cgl-forms.appspot.com",
+  messagingSenderId: "1008506608692",
+  appId: "1:1008506608692:web:47818afefcc2935608be61",
 };
 
 const app = initializeApp(firebaseConfig);
